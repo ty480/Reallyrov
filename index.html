@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROV Random Team Generator</title>
+    <style>
+        body {
+            /* --- เพิ่ม CSS สำหรับพื้นหลังตรงนี้ --- */
+            background-image: url('king_together_bg.jpg'); /* เปลี่ยน 'king_together_bg.jpg' เป็นชื่อไฟล์รูปภาพของคุณ */
+            background-size: cover; /* ทำให้รูปภาพเต็มพื้นที่และครอบคลุมทั้งหน้าจอ */
+            background-attachment: fixed; /* ทำให้รูปภาพอยู่กับที่เมื่อเลื่อนหน้าจอ */
+            background-position: center; /* จัดตำแหน่งรูปภาพให้อยู่ตรงกลาง */
+            
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh; /* ทำให้ body มีความสูงอย่างน้อยเต็มหน้าจอ */
+            margin: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background-color: rgba(26, 26, 26, 0.9); /* เพิ่มความทึบแสงเพื่อให้ข้อความอ่านง่ายขึ้น */
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #ffcc00;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .player-input-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .player-input-grid input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #333;
+            background-color: #222;
+            color: #fff;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background-image: linear-gradient(to right, #ff8c00, #ffcc00);
+            color: #000;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ROV Random Team Generator</h1>
+    <h2>ใส่ชื่อผู้เล่น (สูงสุด 20 คน)</h2>
+    <div class="player-input-grid" id="player-inputs">
+        </div>
+    <button id="start-btn">เริ่มสุ่ม</button>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const playerInputsContainer = document.getElementById('player-inputs');
+        const startBtn = document.getElementById('start-btn');
+
+        for (let i = 0; i < 20; i++) {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = `ผู้เล่น ${i + 1}`;
+            playerInputsContainer.appendChild(input);
+        }
+
+        startBtn.addEventListener('click', () => {
+            const players = [];
+            const inputs = playerInputsContainer.querySelectorAll('input');
+            inputs.forEach(input => {
+                if (input.value.trim() !== '') {
+                    players.push(input.value.trim());
+                }
+            });
+
+            if (players.length < 10) {
+                alert('กรุณาใส่ชื่อผู้เล่นอย่างน้อย 10 คน เพื่อสุ่ม 2 ทีม');
+                return;
+            }
+
+            const playersString = encodeURIComponent(JSON.stringify(players));
+            window.location.href = `randomizer.html?players=${playersString}`;
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROV Random Teams & Heroes</title>
+    <style>
+        body {
+            /* --- เพิ่ม CSS สำหรับพื้นหลังตรงนี้ --- */
+            background-image: url('king_together_bg.jpg'); /* เปลี่ยน 'king_together_bg.jpg' เป็นชื่อไฟล์รูปภาพของคุณ */
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+
+            color: #fff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            background-color: rgba(26, 26, 26, 0.9); /* เพิ่มความทึบแสง */
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        h1 {
+            color: #ffcc00;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .teams-display {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .team-card {
+            background-color: rgba(42, 42, 42, 0.9); /* เพิ่มความทึบแสง */
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            width: 250px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            text-align: left;
+        }
+        .team-card h2 {
+            color: #ffcc00;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .team-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .team-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+        }
+        .team-card li:last-child {
+            border-bottom: none;
+        }
+        .player-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .hero-name {
+            color: #ffcc00;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        .role-name {
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        .player-name {
+            font-size: 1.1em;
+            color: #fff;
+            font-weight: bold;
+        }
+        .back-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #555;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        .back-button:hover {
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>ผลการสุ่ม</h1>
+    <div class="teams-display" id="teams-display">
+        </div>
+    <button class="back-button" onclick="history.back()">กลับ</button>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const teamsDisplay = document.getElementById('teams-display');
+        const roles = ['Abyssal Dragon Lane', 'Dark Slayer Lane', 'Mid Lane', 'Jungle', 'Support'];
+
+        // *** สำคัญ: กรุณาแก้ไขตรงนี้เพื่อใส่รายชื่อฮีโร่ ROV ทั้ง 124 ตัว ***
+        const allHeroes = [
+            'Tel\'Annas', 'Yorn', 'Violet', 'Valhein', 'Hayate', 'Nakroth', 'Murad', 'Zanis', 'Zephys', 'Wukong',
+            'Fennik', 'Lindis', 'Eland\'orr', 'Lubu', 'Maloch', 'Arthur', 'Gildur', 'Aleister', 'Krixi', 'Natalya',
+            'Mina', 'Ormarr', 'Thane', 'Grakk', 'Chaugnar', 'Cresht', 'Alice', 'Payna', 'Kahlii', 'Veera',
+            'Diaochan', 'Ignis', 'Lauriel', 'Tulen', 'Raz', 'Ilumia', 'Jinnar', 'Preyta', 'Marja', 'Zata',
+            'Darcy', 'Ryoma', 'Zill', 'Superman', 'Batman', 'Wonder Woman', 'The Flash', 'Joker', 'Bright', 'Allain',
+            'Ata', 'TeeMee', 'Dirak', 'Paine', 'Lorion', 'Isharr', 'Errol', 'Qi', 'Richter', 'Florentino',
+            'Sinestrea', 'Wiro', 'Omen', 'Yena', 'Volkath', 'Laville', 'Aoi', 'Rouie', 'Skud', 'Moren',
+            'Riktor', 'Veres', 'Brunhilda', 'Keera', 'Capheny', 'Elsu', 'Wisp', 'Kaine', 'Dextra', 'Eva',
+            'Thorne', 'Yan', 'Annette', 'Krizzix', 'Zip', 'Xeniel', 'Khaden', 'Kaine', 'Yue', 'Celica',
+            'Teeri', 'Helen', 'Anes', 'Bonny', 'Zill', 'Zanis', 'Yorn', 'Yena', 'Wisp', 'Wiro', 'Wonder Woman', 'Wukong', 'Violet',
+            'Veera', 'Valhein', 'Tulen', 'Thorne', 'Thane', 'Teeri', 'TeeMee', 'Tel\'Annas', 'Superman', 'Sinestrea', 'Skud',
+            'Rouie', 'Richter', 'Ryoma', 'Raz', 'Qi', 'Paine', 'Payna', 'Ormarr', 'Omen', 'Nakroth', 'Murad', 'Moren',
+            'Mina', 'Marja', 'Maloch', 'Lubu', 'Lorion', 'Lindis', 'Liliana', 'Lauriel', 'Krixi', 'Krizzix', 'Keera',
+            'Kaine', 'Khaden', 'Joker', 'Jinnar', 'Joker', 'Isharr', 'Ignis', 'Ilumia', 'Hayate', 'Helen', 'Grakk', 'Gildur',
+            'Gildur', 'Florentino', 'Fennik', 'Errol', 'Eland\'orr', 'Elsu', 'Dextra', 'Diaochan', 'Dirak', 'Darcy', 'Cresht', 'Chaugnar',
+            'Celica', 'Capheny', 'Brunhilda', 'Bright', 'Bonny', 'Batman', 'Arthur', 'Ata', 'Annette', 'Anes', 'Allain', 'Alice',
+            'Aleister', 'Aoi'
+        ];
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const playersString = urlParams.get('players');
+        const players = JSON.parse(decodeURIComponent(playersString));
+
+        const shuffledPlayers = players.sort(() => Math.random() - 0.5);
+        const shuffledHeroes = [...allHeroes].sort(() => Math.random() - 0.5);
+
+        const numTeams = Math.floor(shuffledPlayers.length / 5);
+
+        for (let i = 0; i < numTeams; i++) {
+            const teamCard = document.createElement('div');
+            teamCard.className = 'team-card';
+            teamCard.innerHTML = `<h2>ทีม ${i + 1}</h2><ul></ul>`;
+            const playerList = teamCard.querySelector('ul');
+
+            for (let j = 0; j < 5; j++) {
+                const player = shuffledPlayers.pop();
+                const hero = shuffledHeroes.pop();
+                const role = roles[j];
+
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                    <div class="player-info">
+                        <span class="role-name">${role}:</span>
+                        <span class="player-name">${player}</span>
+                        <span class="hero-name">Hero: ${hero}</span>
+                    </div>
+                `;
+                playerList.appendChild(listItem);
+            }
+            teamsDisplay.appendChild(teamCard);
+        }
+    });
+</script>
+
+</body>
+</html>
