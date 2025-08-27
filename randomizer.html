@@ -6,12 +6,10 @@
     <title>ROV Random Teams & Heroes</title>
     <style>
         body {
-            /* --- เพิ่ม CSS สำหรับพื้นหลังตรงนี้ --- */
-            background-image: url('king_together_bg.jpg'); /* เปลี่ยน 'king_together_bg.jpg' เป็นชื่อไฟล์รูปภาพของคุณ */
+            background-image: url('king_together_bg.jpg');
             background-size: cover;
             background-attachment: fixed;
             background-position: center;
-
             color: #fff;
             font-family: Arial, sans-serif;
             display: flex;
@@ -24,7 +22,7 @@
         .container {
             width: 90%;
             max-width: 1200px;
-            background-color: rgba(26, 26, 26, 0.9); /* เพิ่มความทึบแสง */
+            background-color: rgba(26, 26, 26, 0.9);
             border-radius: 10px;
             padding: 30px;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
@@ -42,7 +40,7 @@
             margin-top: 30px;
         }
         .team-card {
-            background-color: rgba(42, 42, 42, 0.9); /* เพิ่มความทึบแสง */
+            background-color: rgba(42, 42, 42, 0.9);
             border-radius: 10px;
             padding: 20px;
             margin: 10px;
@@ -86,6 +84,29 @@
             color: #fff;
             font-weight: bold;
         }
+        .control-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .control-buttons button {
+            padding: 12px 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        #randomize-btn {
+            background-image: linear-gradient(to right, #ff8c00, #ffcc00);
+            color: #000;
+        }
+        #stop-btn {
+            background-color: #e74c3c;
+            color: #fff;
+        }
         .back-button {
             margin-top: 20px;
             padding: 10px 20px;
@@ -96,15 +117,16 @@
             cursor: pointer;
             transition: transform 0.2s ease;
         }
-        .back-button:hover {
-            transform: translateY(-2px);
-        }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h1>ผลการสุ่ม</h1>
+    <div class="control-buttons">
+        <button id="randomize-btn">สุ่ม</button>
+        <button id="stop-btn" style="display:none;">หยุด</button>
+    </div>
     <div class="teams-display" id="teams-display">
         </div>
     <button class="back-button" onclick="history.back()">กลับ</button>
@@ -113,6 +135,10 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const teamsDisplay = document.getElementById('teams-display');
+        const randomizeBtn = document.getElementById('randomize-btn');
+        const stopBtn = document.getElementById('stop-btn');
+        let randomizationInterval;
+
         const roles = ['Abyssal Dragon Lane', 'Dark Slayer Lane', 'Mid Lane', 'Jungle', 'Support'];
 
         // *** สำคัญ: กรุณาแก้ไขตรงนี้เพื่อใส่รายชื่อฮีโร่ ROV ทั้ง 124 ตัว ***
@@ -142,32 +168,68 @@
 
         const shuffledPlayers = players.sort(() => Math.random() - 0.5);
         const shuffledHeroes = [...allHeroes].sort(() => Math.random() - 0.5);
+        const shuffledRoles = [...roles].sort(() => Math.random() - 0.5);
 
-        const numTeams = Math.floor(shuffledPlayers.length / 5);
-
-        for (let i = 0; i < numTeams; i++) {
-            const teamCard = document.createElement('div');
-            teamCard.className = 'team-card';
-            teamCard.innerHTML = `<h2>ทีม ${i + 1}</h2><ul></ul>`;
-            const playerList = teamCard.querySelector('ul');
-
-            for (let j = 0; j < 5; j++) {
-                const player = shuffledPlayers.pop();
-                const hero = shuffledHeroes.pop();
-                const role = roles[j];
-
-                const listItem = document.createElement('li');
-                listItem.innerHTML = `
-                    <div class="player-info">
-                        <span class="role-name">${role}:</span>
-                        <span class="player-name">${player}</span>
-                        <span class="hero-name">Hero: ${hero}</span>
-                    </div>
-                `;
-                playerList.appendChild(listItem);
+        // This function shuffles the heroes and roles arrays
+        function shuffleArrays(arr1, arr2) {
+            for (let i = arr1.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr1[i], arr1[j]] = [arr1[j], arr1[i]];
             }
-            teamsDisplay.appendChild(teamCard);
+            for (let i = arr2.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr2[i], arr2[j]] = [arr2[j], arr2[i]];
+            }
         }
+        
+        // This function displays the results on the page
+        function displayResults(heroes, roles) {
+            teamsDisplay.innerHTML = '';
+            const numTeams = Math.floor(shuffledPlayers.length / 5);
+
+            for (let i = 0; i < numTeams; i++) {
+                const teamCard = document.createElement('div');
+                teamCard.className = 'team-card';
+                teamCard.innerHTML = `<h2>ทีม ${i + 1}</h2><ul></ul>`;
+                const playerList = teamCard.querySelector('ul');
+
+                for (let j = 0; j < 5; j++) {
+                    const playerIndex = (i * 5) + j;
+                    const listItem = document.createElement('li');
+                    listItem.innerHTML = `
+                        <div class="player-info">
+                            <span class="role-name">${roles[j]}:</span>
+                            <span class="player-name">${shuffledPlayers[playerIndex]}</span>
+                            <span class="hero-name">Hero: ${heroes[playerIndex]}</span>
+                        </div>
+                    `;
+                    playerList.appendChild(listItem);
+                }
+                teamsDisplay.appendChild(teamCard);
+            }
+        }
+        
+        randomizeBtn.addEventListener('click', () => {
+            randomizeBtn.style.display = 'none';
+            stopBtn.style.display = 'block';
+            
+            // Start the randomization loop
+            randomizationInterval = setInterval(() => {
+                shuffleArrays(shuffledHeroes, shuffledRoles);
+                displayResults(shuffledHeroes, shuffledRoles);
+            }, 50);
+        });
+
+        stopBtn.addEventListener('click', () => {
+            clearInterval(randomizationInterval);
+            stopBtn.style.display = 'none';
+            randomizeBtn.style.display = 'block';
+            
+            // The final state is already displayed from the last interval
+        });
+
+        // Display initial results on page load
+        displayResults(shuffledHeroes, shuffledRoles);
     });
 </script>
 
