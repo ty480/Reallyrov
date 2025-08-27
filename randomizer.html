@@ -18,7 +18,20 @@
             padding: 20px;
             min-height: 100vh;
             margin: 0;
+            position: relative;
         }
+
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+        
+        /* เพิ่ม CSS สำหรับการดีเลย์การแสดงผล */
         .container {
             width: 90%;
             max-width: 1200px;
@@ -27,7 +40,11 @@
             padding: 30px;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
             text-align: center;
+            z-index: 1;
+            opacity: 0; /* ซ่อนตอนแรก */
+            transition: opacity 0.5s ease-in-out; /* เพิ่มการเปลี่ยนภาพให้ดูสมูท */
         }
+        
         h1 {
             color: #ffcc00;
             text-transform: uppercase;
@@ -121,6 +138,10 @@
 </head>
 <body>
 
+<video autoplay loop muted playsinline id="bg-video">
+    <source src="lv_0_20250827221308.mp4" type="video/mp4">
+</video>
+
 <div class="container">
     <h1>ผลการสุ่ม</h1>
     <div class="control-buttons">
@@ -137,6 +158,7 @@
         const teamsDisplay = document.getElementById('teams-display');
         const randomizeBtn = document.getElementById('randomize-btn');
         const stopBtn = document.getElementById('stop-btn');
+        const container = document.querySelector('.container');
         let randomizationInterval;
 
         const roles = ['Abyssal Dragon Lane', 'Dark Slayer Lane', 'Mid Lane', 'Jungle', 'Support'];
@@ -161,7 +183,7 @@
             'Celica', 'Capheny', 'Brunhilda', 'Bright', 'Bonny', 'Batman', 'Arthur', 'Ata', 'Annette', 'Anes', 'Allain', 'Alice',
             'Aleister', 'Aoi'
         ];
-
+        
         const urlParams = new URLSearchParams(window.location.search);
         const playersString = urlParams.get('players');
         const players = JSON.parse(decodeURIComponent(playersString));
@@ -169,8 +191,7 @@
         const shuffledPlayers = players.sort(() => Math.random() - 0.5);
         const shuffledHeroes = [...allHeroes].sort(() => Math.random() - 0.5);
         const shuffledRoles = [...roles].sort(() => Math.random() - 0.5);
-
-        // This function shuffles the heroes and roles arrays
+        
         function shuffleArrays(arr1, arr2) {
             for (let i = arr1.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -182,7 +203,6 @@
             }
         }
         
-        // This function displays the results on the page
         function displayResults(heroes, roles) {
             teamsDisplay.innerHTML = '';
             const numTeams = Math.floor(shuffledPlayers.length / 5);
@@ -213,7 +233,6 @@
             randomizeBtn.style.display = 'none';
             stopBtn.style.display = 'block';
             
-            // Start the randomization loop
             randomizationInterval = setInterval(() => {
                 shuffleArrays(shuffledHeroes, shuffledRoles);
                 displayResults(shuffledHeroes, shuffledRoles);
@@ -225,11 +244,14 @@
             stopBtn.style.display = 'none';
             randomizeBtn.style.display = 'block';
             
-            // The final state is already displayed from the last interval
+            displayResults(shuffledHeroes, shuffledRoles);
         });
-
-        // Display initial results on page load
-        displayResults(shuffledHeroes, shuffledRoles);
+        
+        // ดีเลย์การแสดงผล 0.5 วินาที
+        setTimeout(() => {
+            container.style.opacity = '1';
+            displayResults(shuffledHeroes, shuffledRoles);
+        }, 500); // 500 มิลลิวินาที = 0.5 วินาที
     });
 </script>
 
